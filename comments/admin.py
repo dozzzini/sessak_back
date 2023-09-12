@@ -5,4 +5,5 @@ from .models import Comment
 
 @admin.register(Comment)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ("__str__",)
+    list_display = ["comment", "author", "post"]
+    list_display_links = ["comment"]
