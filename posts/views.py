@@ -62,7 +62,9 @@ class PostDetails(APIView):
         print("serializer_1: ", serializer)
         if serializer.is_valid():
             updated_post = serializer.save()
-            return Response(status=status.HTTP_200_OK)
+            return Response(
+                status=status.HTTP_200_OK,
+            )
         else:
             return Response(
                 serializer.errors,

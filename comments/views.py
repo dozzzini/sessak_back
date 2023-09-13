@@ -40,7 +40,7 @@ class NewComment(APIView):
             )
 
 
-# 댓글 조회, 수정, 삭제 API
+# 댓글 수정, 삭제 API
 class CommentDetails(APIView):
     # permission_classes=[IsAuthenticated]
 
