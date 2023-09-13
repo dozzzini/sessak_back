@@ -27,7 +27,7 @@ urlpatterns = [
     # path("accounts/logout/", LogoutView.as_view(), name="account_logout"),
     # path("accounts/", include("allauth.urls")),
     path("api/v1/users/", include("users.urls")),
-    # path("api/v1/posts/", include("posts.urls")),
+    path("api/v1/posts/", include("posts.urls")),
 ]
 
 if settings.DEBUG:
