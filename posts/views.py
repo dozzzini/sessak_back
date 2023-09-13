@@ -24,7 +24,10 @@ class NewPost(APIView):
         try:
             serializer.is_valid(raise_exception=True)
         except ValidationError:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         new_post = serializer.save()
         return Response(
@@ -33,6 +36,7 @@ class NewPost(APIView):
         )
 
 
+# 게시글 조회, 수정 , 삭제 API
 class PostDetails(APIView):
     # permission_classes = [IsAuthenticated]
 

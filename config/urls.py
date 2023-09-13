@@ -28,6 +28,7 @@ urlpatterns = [
     # path("accounts/", include("allauth.urls")),
     path("api/v1/users/", include("users.urls")),
     path("api/v1/posts/", include("posts.urls")),
+    path("api/v1/comments/", include("comments.urls")),
 ]
 
 if settings.DEBUG:
