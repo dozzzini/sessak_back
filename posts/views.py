@@ -78,9 +78,10 @@ class PostDetails(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+# 좋아요 추가 및 취소
 @api_view(["POST"])
-def like_post(request, post_id):
-    post = Post.objects.get(pk=post_id)
+def like_post(request, pk):
+    post = Post.objects.get(pk=pk)
     print(dir(request.user))
     if post.like_users.filter(pk=request.user.pk).exists():
         # 넌 취소를 할 수 있어

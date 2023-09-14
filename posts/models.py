@@ -43,6 +43,6 @@ class Post(models.Model):
         return f"{self.title} by {self.author}"
 
 
-class Like(models.Model):
-    user = models.ForeignKey("users.User", on_delete=models.CASCADE)
-    post = models.ForeignKey("posts.Post", on_delete=models.CASCADE)
+# class Like(models.Model):
+#     user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+#     post = models.ForeignKey("posts.Post", on_delete=models.CASCADE)
