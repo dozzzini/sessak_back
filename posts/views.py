@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.exceptions import ValidationError, NotFound
 from rest_framework.response import Response
+from django.core.exceptions import ObjectDoesNotExist
 
 # 모델 불러오기
 from .models import Post
@@ -49,6 +50,12 @@ class PostDetails(APIView):
 
     def get(self, request, pk):
         post = self.get_object(pk)
+        print("ㄱㄴㄱㄴ", post)
+        print("안 바뀐 거", post.view_num)
+        post.view_num = post.view_num + 1
+        print("바뀐 거", post.view_num)
+        post.save()
+        print("바뀐 post", post)
         serializer = PostSerializer(post)
         return Response(serializer.data)
 
@@ -92,3 +99,23 @@ def like_post(request, pk):
         post.like_users.add(request.user.pk)
         # 그럼 누를 수 있어
         return Response(status=status.HTTP_200_OK)
+
+
+# 게시물 검색 - 제목 또는 내용
+class SearchPost(APIView):
+    def post(self, request):
+        pass
+
+
+# 조회수
+# @api_view(["GET"])
+# def view_post(request, pk):
+#     try:
+#         post = Post.objects.get(pk=pk)
+#         post.view_num += 1
+#         post.save()
+#         serializer = PostSerializer(post)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+
+#     except ObjectDoesNotExist:
+#         return Response({"message": "게시글을 찾을 수 없습니다"}, status=status.HTTP_404_NOT_FOUND)
