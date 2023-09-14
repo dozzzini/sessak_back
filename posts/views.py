@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from rest_framework.decorators import api_view
 
 # Restframework에서 불러온 것들
 from rest_framework.views import APIView
@@ -75,3 +76,18 @@ class PostDetails(APIView):
         post = self.get_object(pk)
         post.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(["POST"])
+def like_post(request, post_id):
+    post = Post.objects.get(pk=post_id)
+    print(dir(request.user))
+    if post.like_users.filter(pk=request.user.pk).exists():
+        # 넌 취소를 할 수 있어
+        post.like_users.remove(request.user.pk)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    else:
+        # 만약 안 들어와있어
+        post.like_users.add(request.user.pk)
+        # 그럼 누를 수 있어
+        return Response(status=status.HTTP_200_OK)

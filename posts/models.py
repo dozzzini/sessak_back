@@ -7,8 +7,14 @@ class Post(models.Model):
     title = models.CharField(max_length=30, verbose_name="게시글 제목")
     content = models.TextField(verbose_name="게시글 내용")
     image = models.ImageField(upload_to="", null=True, blank=True, verbose_name="첨부파일")
-    like_num = models.PositiveIntegerField(default=0, verbose_name="좋아요 수")
-    comment_num = models.PositiveIntegerField(default=0, verbose_name="댓글 수")
+    # like_num = models.PositiveIntegerField(default=0, verbose_name="좋아요 수")
+    like_users = models.ManyToManyField(
+        "users.User",
+        blank=True,
+        related_name="like_posts",
+        verbose_name="좋아요 누른 사람",
+    )
+    # comment_num = models.PositiveIntegerField(default=0, verbose_name="댓글 수")
     view_num = models.PositiveIntegerField(default=0, verbose_name="조회수")
     created_at = models.DateTimeField(
         auto_now_add=True,
@@ -35,3 +41,8 @@ class Post(models.Model):
 
     def __str__(self) -> str:
         return f"{self.title} by {self.author}"
+
+
+class Like(models.Model):
+    user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    post = models.ForeignKey("posts.Post", on_delete=models.CASCADE)
