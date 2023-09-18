@@ -19,18 +19,15 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 
-# from allauth.account.views import LoginView, LogoutView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    # path("accounts/login/", LoginView.as_view(), name="account_login"),
-    # path("accounts/logout/", LogoutView.as_view(), name="account_logout"),
-    # path("accounts/", include("allauth.urls")),
-    path("api/v1/users/", include("users.urls")),
     path("api/v1/posts/", include("posts.urls")),
     path("api/v1/comments/", include("comments.urls")),
     path("api/v1/categories/", include("categories.urls")),
+    path("api/v1/users/", include("users.urls")),
 ]
+
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

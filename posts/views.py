@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
+from django.db.models import Count, Sum
 
 # Restframework에서 불러온 것들
 from rest_framework.views import APIView
@@ -13,7 +14,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from .models import Post
 
 # serializers 불러오기
-from .serializers import PostSerializer
+from .serializers import PostSerializer, PopularPostSerializer
 
 
 # 새 게시글 작성 API
@@ -49,15 +50,16 @@ class PostDetails(APIView):
             raise NotFound
 
     def get(self, request, pk):
-        post = self.get_object(pk)
-        print("ㄱㄴㄱㄴ", post)
-        print("안 바뀐 거", post.view_num)
-        post.view_num = post.view_num + 1
-        print("바뀐 거", post.view_num)
-        post.save()
-        print("바뀐 post", post)
-        serializer = PostSerializer(post)
-        return Response(serializer.data)
+        try:
+            post = self.get_object(pk)
+            post.view_num = post.view_num + 1
+            post.save()
+            serializer = PostSerializer(post)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except ObjectDoesNotExist:
+            return Response(
+                {"message": "게시글을 찾을 수 없습니다"}, status=status.HTTP_404_NOT_FOUND
+            )
 
     def put(self, request, pk):
         post = self.get_object(pk)
@@ -102,20 +104,16 @@ def like_post(request, pk):
 
 
 # 게시물 검색 - 제목 또는 내용
-class SearchPost(APIView):
-    def post(self, request):
-        pass
+class PostSearch(APIView):
+    pass
 
 
-# 조회수
-# @api_view(["GET"])
-# def view_post(request, pk):
-#     try:
-#         post = Post.objects.get(pk=pk)
-#         post.view_num += 1
-#         post.save()
-#         serializer = PostSerializer(post)
-#         return Response(serializer.data, status=status.HTTP_200_OK)
+# 인기게시물 정렬
+@api_view(["GET"])
+def popular_posts_view(request):
+    popular_posts = Post.objects.annotate(
+        total_nums=Count("like_users") + Sum("view_num") + Count("post_comments")
+    ).order_by("-total_nums")[:10]
 
-#     except ObjectDoesNotExist:
-#         return Response({"message": "게시글을 찾을 수 없습니다"}, status=status.HTTP_404_NOT_FOUND)
+    serializer = PopularPostSerializer(popular_posts, many=True)
+    return Response({"popular_posts": serializer.data})

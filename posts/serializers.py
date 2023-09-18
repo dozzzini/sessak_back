@@ -23,3 +23,14 @@ class PostSerializer(ModelSerializer):
 
     def get_comment_nums(self, post):
         return post.post_comments.all().count()
+
+
+class PopularPostSerializer(ModelSerializer):
+    total_nums = serializers.IntegerField()
+
+    class Meta:
+        model = Post
+        fields = "__all__"
+
+    def get_total_nums(self, post):
+        return post.total_nums

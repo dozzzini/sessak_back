@@ -19,21 +19,32 @@ def get_env_variable(var_name):
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 SECRET_KEY = get_env_variable("DJANGO_SECRET_KEY")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ["*"]
-
 
 # Application definition
+THIRD_PARTY_APPS = [
+    "rest_framework",
+    "corsheaders",
+    # 소셜로그인 시 필요한 settings
+    "rest_framework.authtoken",
+    "rest_framework_simplejwt.token_blacklist",
+    "rest_framework_simplejwt",
+    "django.contrib.sites",
+    "social_django",
+    "allauth",
+    "allauth.account",
+    "rest_auth",
+    "rest_auth.registration",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.kakao",
+    "allauth.socialaccount.providers.naver",
+    "allauth.socialaccount.providers.google",
+]
 
 CUSTOM_APPS = [
     "users.apps.UsersConfig",
     "posts.apps.PostsConfig",
-    "popularities.apps.PopularitiesConfig",
     "comments.apps.CommentsConfig",
     "categories.apps.CategoriesConfig",
-    "rest_framework",
 ]
 
 SYSTEM_APPS = [
@@ -43,19 +54,12 @@ SYSTEM_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # 소셜로그인 시 필요한 settings
-    "django.contrib.sites",
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
-    "allauth.socialaccount.providers.kakao",
-    "allauth.socialaccount.providers.naver",
-    "allauth.socialaccount.providers.google",
 ]
-SITE_ID = 1
-INSTALLED_APPS = CUSTOM_APPS + SYSTEM_APPS
+INSTALLED_APPS = CUSTOM_APPS + SYSTEM_APPS + THIRD_PARTY_APPS
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",  # CORS 추가
+    "django.middleware.common.CommonMiddleware",  # CORS 추가
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -64,7 +68,11 @@ MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "social_django.middleware.SocialAuthExceptionMiddleware",
 ]
+
+CORS_ORIGIN_WHITELIST = ("http://127.0.0.1:3000", "http://localhost:3000")
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = "config.urls"
 
@@ -84,24 +92,21 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "config.wsgi.application"
-
-AUTHENTICATION_BACKENDS = (
-    # Needed to login by username in Django admin, regardless of `allauth`
-    "django.contrib.auth.backends.ModelBackend",
-    # `allauth` specific authentication methods, such as login by e-mail
-    "allauth.account.auth_backends.AuthenticationBackend",
-)
-
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "SCOPE": [
+            "profile",
+            "email",
+        ],
+        "AUTH_PARAMS": {
+            "access_type": "online",
+        },
     }
 }
+
+
+GOOGLE_AUTH_CLIENT_ID = get_env_variable("GOOGLE_AUTH_CLIENT_ID")
+GOOGLE_AUTH_SECRET = get_env_variable("GOOGLE_AUTH_SECRET")
 
 
 # Password validation
@@ -148,6 +153,14 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
+# 징고 allauth
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+    "social_core.backends.kakao.KakaoOAuth2",
+    "social_core.backends.google.GoogleOAuth2",  # <-- 구글
+)
+SITE_ID = 1
 LOGIN_REDIRECT_URL = "/"  # 로그인 후 리디렉션할 페이지
 ACCOUNT_LOGOUT_REDIRECT_URL = "/"  # 로그아웃 후 리디렉션 할 페이지
 ACCOUNT_LOGOUT_ON_GET = True  # 로그아웃 버튼 클릭 시 자동 로그아웃
@@ -156,7 +169,46 @@ ACCOUNT_LOGOUT_ON_GET = True  # 로그아웃 버튼 클릭 시 자동 로그아�
 AUTH_USER_MODEL = "users.User"
 
 REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.TokenAuthentication",
+        "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
+}
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
+SOCIALACCOUNT_AUTO_SIGNUP = False
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+REST_USE_JWT = True
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=2),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": True,
+}
+
+
+WSGI_APPLICATION = "config.wsgi.application"
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
+ALLOWED_HOSTS = ["*"]
+
+# Database
+# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
 }

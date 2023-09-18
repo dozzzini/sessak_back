@@ -15,7 +15,10 @@ class Post(models.Model):
         verbose_name="좋아요 누른 사람",
     )
     # comment_num = models.PositiveIntegerField(default=0, verbose_name="댓글 수")
-    view_num = models.PositiveIntegerField(default=0, verbose_name="조회수")
+    view_num = models.PositiveIntegerField(
+        default=0,
+        verbose_name="조회수",
+    )
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name="게시글 작성날짜",
