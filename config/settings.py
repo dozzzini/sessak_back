@@ -74,12 +74,12 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGIN = [
     "http://127.0.0.1:3000",
     "http://localhost:3000",
-    "https://port-0-sessak-back2-cgw1f2almhig6l2.sel5.cloudtype.app/",
+    "https://port-0-sessak-back2-cgw1f2almhig6l2.sel5.cloudtype.app",
 ]
 CORS_ORIGIN_WHITELIST = (
     "http://127.0.0.1:3000",
     "http://localhost:3000",
-    "https://port-0-sessak-back2-cgw1f2almhig6l2.sel5.cloudtype.app/",
+    "https://port-0-sessak-back2-cgw1f2almhig6l2.sel5.cloudtype.app",
 )
 CORS_ALLOW_CREDENTIALS = True
 
@@ -215,9 +215,21 @@ ALLOWED_HOSTS = ["*"]
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
+
+# 배포용
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": get_env_variable("NAME"),
+        "HOST": get_env_variable("HOST"),
+        "USER": get_env_variable("USER"),
+        "PASSWORD": get_env_variable("PASSWORD"),
+        "PORT": get_env_variable("PORT"),
     }
 }
