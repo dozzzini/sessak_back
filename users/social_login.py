@@ -3,7 +3,9 @@ from django.conf import settings
 from django.core.exceptions import ValidationError, BadRequest
 from users.models import User
 from django.contrib.auth import login
-from allauth.socialaccount.models import SocialAccount
+import os, environ
+
+# from allauth.socialaccount.models import SocialAccount
 from dj_rest_auth.registration.views import SocialLoginView
 from allauth.socialaccount.providers.google import views as google_view
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
@@ -11,10 +13,11 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 import requests
 from rest_framework import status
-import logging  # 로깅을 위해 필요한 모듈을 임포트합니다.
+import logging
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.response import Response
-from rest_framework.renderers import JSONRenderer
+
+# from rest_framework.renderers import JSONRenderer
 from . import serializers
 
 # state = getattr(settings, "STATE")
@@ -121,3 +124,21 @@ class GoogleLogin(SocialLoginView):
     adapter_class = google_view.GoogleOAuth2Adapter
     callback_url = GOOGLE_CALLBACK_URI
     client_class = OAuth2Client
+
+
+# @api_view(["GET"])
+# def kakao_login(request):
+#     client_id = os.environ.get("KAKAO_ID")
+#     REDIRECT_URI = "http://127.0.0.1:8000/users/login/kakao/callback"
+#     return redirect(
+#         f"https://kauth.kakao.com/oauth/authorize?client_id={client_id}&redirect_uri={REDIRECT_URI}&response_type=code"
+#     )
+
+# def kako_callback(request):
+#     try:
+#         code = request.GET.get("code")
+#         client_id = os.environ.get("KAKAO_ID")
+#         REDIRECT_URI = "http://127.0.0.1:8000/users/login/kakao/callback"
+#         token_request = requests.get(
+#             f"https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={client_id}&redirect_uri={REDIRECT_URI}&code={code}"
+#         )
