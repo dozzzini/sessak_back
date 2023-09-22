@@ -71,8 +71,16 @@ MIDDLEWARE = [
     "social_django.middleware.SocialAuthExceptionMiddleware",
 ]
 
-CORS_ALLOWED_ORIGIN = ["http://127.0.0.1:3000", "http://localhost:3000"]
-CORS_ORIGIN_WHITELIST = ("http://127.0.0.1:3000", "http://localhost:3000")
+CORS_ALLOWED_ORIGIN = [
+    "http://127.0.0.1:3000",
+    "http://localhost:3000",
+    "https://port-0-sessak-back2-cgw1f2almhig6l2.sel5.cloudtype.app/",
+]
+CORS_ORIGIN_WHITELIST = (
+    "http://127.0.0.1:3000",
+    "http://localhost:3000",
+    "https://port-0-sessak-back2-cgw1f2almhig6l2.sel5.cloudtype.app/",
+)
 CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = "config.urls"
