@@ -214,21 +214,21 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
 # Database
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
-
-# 배포용
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": get_env_variable("NAME"),
-        "HOST": get_env_variable("HOST"),
-        "USER": get_env_variable("USER"),
-        "PASSWORD": get_env_variable("PASSWORD"),
-        "PORT": get_env_variable("PORT"),
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+
+# # 배포용
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.mysql",
+#         "NAME": get_env_variable("NAME"),
+#         "HOST": get_env_variable("HOST"),
+#         "USER": get_env_variable("USER"),
+#         "PASSWORD": get_env_variable("PASSWORD"),
+#         "PORT": get_env_variable("PORT"),
+#     }
+# }
