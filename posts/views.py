@@ -4,6 +4,7 @@ from django.db.models import Count, Sum
 
 # Restframework에서 불러온 것들
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.exceptions import ValidationError, NotFound
@@ -32,11 +33,19 @@ class NewPost(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        new_post = serializer.save()
+        new_post = serializer.save(author=request.user)
         return Response(
             PostSerializer(new_post).data,
             status=status.HTTP_201_CREATED,
         )
+
+
+# 모든 게시글 조회
+@api_view(["GET"])
+def all_post(request):
+    posts = Post.objects.all()
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data)
 
 
 # 게시글 조회, 수정 , 삭제 API
