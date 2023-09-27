@@ -24,7 +24,8 @@ from . import serializers
 logger = logging.getLogger(__name__)
 
 state = "random_string"
-BASE_URL = "http://127.0.0.1:8000/"
+# BASE_URL = "http://127.0.0.1:8000/"
+BASE_URL = "https://port-0-sessak-back2-cgw1f2almhig6l2.sel5.cloudtype.app/"
 GOOGLE_CALLBACK_URI = BASE_URL + "api/v1/users/google/callback/"
 
 
