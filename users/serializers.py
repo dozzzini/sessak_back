@@ -8,3 +8,9 @@ class UserSerializer(serializers.ModelSerializer):
         fields = [
             "nickname",
         ]
+
+
+class SignupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("email", "nickname", "location", "name", "profile_image")
