@@ -70,7 +70,9 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "social_django.middleware.SocialAuthExceptionMiddleware",
 ]
-
+CSRF_TRUSTED_ORIGINS = [
+    "https://port-0-sessak-back2-cgw1f2almhig6l2.sel5.cloudtype.app",
+]
 CORS_ALLOWED_ORIGIN = [
     "http://127.0.0.1:3000",
     "http://localhost:3000",
