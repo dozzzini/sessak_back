@@ -72,7 +72,7 @@ def google_callback(request):
             {"err_msg": "failed to get email"}, status=status.HTTP_400_BAD_REQUEST
         )
     profile_req_json = profile_req.json()
-
+    print(profile_req_json)
     data = {
         "email": profile_req_json.get("email"),
         "name": profile_req_json.get("name", ""),
@@ -88,6 +88,7 @@ def google_callback(request):
             raise BadRequest("잘못된 요청입니다.")
     else:
         user = User(
+            username=data["username"],
             email=data["email"],
             login_method=User.LOGIN_GOOGLE,
         )
