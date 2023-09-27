@@ -16,6 +16,8 @@ class User(AbstractUser):
         (LOGIN_GOOGLE, "google"),
     )
 
+    USERNAME_FIELD = "email"
+
     login_method = models.CharField(
         max_length=8, choices=LOGIN_CHOICES, default=LOGIN_HOME
     )

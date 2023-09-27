@@ -88,7 +88,6 @@ def google_callback(request):
             raise BadRequest("잘못된 요청입니다.")
     else:
         user = User(
-            username=data["username"],
             email=data["email"],
             login_method=User.LOGIN_GOOGLE,
         )
