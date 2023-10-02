@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-from rest_framework.exceptions import ValidationError, NotFound
+from rest_framework.exceptions import ValidationError, NotFound, PermissionDenied
 from rest_framework.response import Response
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -18,7 +18,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from .models import Post
 
 # serializers 불러오기
-from .serializers import PostSerializer, PopularPostSerializer
+from .serializers import PostSerializer, PopularPostSerializer, UpdatedPostSerializer
 
 # 검색기능에 사용할 Q 불러오기
 from django.db.models import Q
@@ -99,7 +99,7 @@ def all_post(request):
 
 # 게시글 조회, 수정 , 삭제 API
 class PostDetails(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_object(self, pk):
         try:
@@ -125,12 +125,19 @@ class PostDetails(APIView):
         serializer = PostSerializer(
             post,
             data=request.data,
-            partial=True,
+            # partial=True,
         )
-        print("serializer_1: ", serializer)
+        # print("serializer_1: ", serializer)
+        if post.author != request.user:
+            raise PermissionDenied("수정권한이 없습니다")
+
         if serializer.is_valid():
             updated_post = serializer.save()
             return Response(
+                {
+                    "message": "게시글이 수정되었습니다.",
+                    "data": UpdatedPostSerializer(updated_post).data,
+                },
                 status=status.HTTP_200_OK,
             )
         else:
@@ -141,8 +148,16 @@ class PostDetails(APIView):
 
     def delete(self, request, pk):
         post = self.get_object(pk)
+
+        if post.author != request.user:
+            raise PermissionDenied("삭제권한이 없습니다")
+
         post.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+
+        return Response(
+            {"message": "게시글이 삭제되었습니다."},
+            status=status.HTTP_204_NO_CONTENT,
+        )
 
 
 # 좋아요 추가 및 취소

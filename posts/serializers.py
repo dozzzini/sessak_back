@@ -34,3 +34,9 @@ class PopularPostSerializer(ModelSerializer):
 
     def get_total_nums(self, post):
         return post.total_nums
+
+
+class UpdatedPostSerializer(ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ("title", "content")

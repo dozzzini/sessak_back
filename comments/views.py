@@ -12,7 +12,7 @@ from .models import Comment
 from posts.models import Post
 
 # serializers 불러오기
-from .serializers import CommentSerializer
+from .serializers import CommentSerializer, UpdatedCommentSerializer
 
 
 # 새 댓글 작성 API (해당 게시물에 대한)
@@ -68,7 +68,7 @@ class CommentDetails(APIView):
         serializer = CommentSerializer(
             comment,
             data=request.data,
-            partial=True,
+            # partial=True,
         )
         if comment.author != request.user:
             raise PermissionDenied("수정권한이 없습니다")
@@ -76,7 +76,10 @@ class CommentDetails(APIView):
         if serializer.is_valid():
             updated_comment = serializer.save()
             return Response(
-                CommentSerializer(updated_comment).data,
+                {
+                    "message": "댓글이 수정되었습니다.",
+                    "data": UpdatedCommentSerializer(updated_comment).data,
+                },
                 status=status.HTTP_200_OK,
             )
         else:
@@ -87,9 +90,13 @@ class CommentDetails(APIView):
 
     def delete(self, request, comment_id):
         comment = self.get_comment(comment_id)
+
         if comment.author != request.user:
             raise PermissionDenied("삭제권한이 없습니다")
+
         comment.delete()
+
         return Response(
+            {"message": "댓글이 삭제되었습니다."},
             status=status.HTTP_204_NO_CONTENT,
         )
