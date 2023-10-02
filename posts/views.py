@@ -11,11 +11,17 @@ from rest_framework.exceptions import ValidationError, NotFound
 from rest_framework.response import Response
 from django.core.exceptions import ObjectDoesNotExist
 
+# paginator를 위해 불러올 것들
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+
 # 모델 불러오기
 from .models import Post
 
 # serializers 불러오기
 from .serializers import PostSerializer, PopularPostSerializer
+
+# 검색기능에 사용할 Q 불러오기
+from django.db.models import Q
 
 
 # 새 게시글 작성 API
@@ -43,9 +49,52 @@ class NewPost(APIView):
 # 모든 게시글 조회
 @api_view(["GET"])
 def all_post(request):
-    posts = Post.objects.all()
-    serializer = PostSerializer(posts, many=True)
-    return Response(serializer.data)
+    # posts = Post.objects.all()
+
+    # 전체 포스트가 담겨 있는 객체들을 생성일 최신순으로 정렬
+    post_list = Post.objects.all().order_by("-created_at")
+
+    #'page'라는 명으로 들어온 값을 가져오기
+    page = int(request.GET.get("page", 1))
+
+    paginator = Paginator(post_list, 7)
+
+    try:
+        # 페이지마다 할당된 포스팅이 담겨있는 객체
+        page_obj = paginator.page(page)
+
+        # 페이지 숫자에 아무것도 들어오지 않을 경우 1페이지로 인식
+    except PageNotAnInteger:
+        page = 1
+        page_obj = paginator.page(page)
+
+    except EmptyPage:
+        # 존재하지 않는 page를 입력할 때 1페이지로 이동
+        # page = paginator.num_pages
+        # page = 1
+        # page_obj = paginator.page(page)
+        raise NotFound("존재하지 않는 페이지입니다.")
+
+    leftIndex = int(page) - 2
+    if leftIndex < 1:  # 현재 페이지가 1일 경우 마이너스가 되지 않도록 최솟값을 1로 설정
+        leftIndex = 1
+
+    rightIndex = int(page) + 2
+    if (
+        rightIndex > paginator.num_pages
+    ):  # 현재 페이지가 마지막 페이지(=내가 가지고 있는 마지막 페이지)를 넘을 수 없도록 최댓값을 마지막 페이지로 설정
+        rightIndex = paginator.num_pages
+
+    total_page = list(range(leftIndex, rightIndex + 1))
+    page_list = PostSerializer(page_obj, many=True).data
+
+    return Response(
+        {
+            "total_page": total_page,
+            "page_list": page_list,
+        },
+        status=status.HTTP_200_OK,
+    )
 
 
 # 게시글 조회, 수정 , 삭제 API
@@ -114,7 +163,18 @@ def like_post(request, pk):
 
 # 게시물 검색 - 제목 또는 내용
 class PostSearch(APIView):
-    pass
+    def get(self, request):
+        keyword = request.GET.get("keyword", "")  # 검색어
+
+        if keyword:
+            results = Post.objects.filter(
+                Q(title__icontains=keyword) | Q(content__icontains=keyword)
+            )
+        else:
+            results = Post.objects.none()
+
+        serializer = PostSerializer(results, many=True)
+        return Response(serializer.data)
 
 
 # 인기게시물 정렬

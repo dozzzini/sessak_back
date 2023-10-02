@@ -44,11 +44,11 @@ class NewComment(APIView):
 class CommentDetails(APIView):
     # permission_classes=[IsAuthenticated]
 
-    # def get_post(self, post_id):
-    #     try:
-    #         return Post.objects.get(pk=post_id)
-    #     except Post.DoesNotExist:
-    #         raise NotFound("게시글이 존재하지 않습니다.")
+    def get_post(self, post_id):
+        try:
+            return Post.objects.get(pk=post_id)
+        except Post.DoesNotExist:
+            raise NotFound("게시글이 존재하지 않습니다.")
 
     def get_comment(self, comment_id):
         try:
@@ -62,11 +62,11 @@ class CommentDetails(APIView):
     #     comments = post.post_comments.all()
     #     print("댓글:", comments)
 
-    #     if comments.count() == 0:
-    #         return Response(
-    #             {"message": "작성된 댓글이 없습니다"},
-    #             status=status.HTTP_204_NO_CONTENT,
-    #         )
+    # if comments.count() == 0:
+    #     return Response(
+    #         {"message": "작성된 댓글이 없습니다"},
+    #         status=status.HTTP_204_NO_CONTENT,
+    #     )
     #     serializer = CommentSerializer(
     #         comments,
     #         context={"request": request},
@@ -87,8 +87,8 @@ class CommentDetails(APIView):
             data=request.data,
             partial=True,
         )
-        # if comment.author != request.user:
-        #     raise PermissionDenied("수정권한이 없습니다")
+        if comment.author != request.user:
+            raise PermissionDenied("수정권한이 없습니다")
 
         if serializer.is_valid():
             updated_comment = serializer.save()
