@@ -17,7 +17,7 @@ from .serializers import CommentSerializer
 
 # 새 댓글 작성 API (해당 게시물에 대한)
 class NewComment(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         serializer = CommentSerializer(data=request.data)
@@ -26,7 +26,7 @@ class NewComment(APIView):
         except Post.DoesNotExist:
             raise NotFound("해당하는 게시글이 없습니다")
 
-        if serializer.is_valid(raise_exception=True):
+        if serializer.is_valid():
             new_comment = serializer.save(author=request.user, post=post)
             return Response(
                 CommentSerializer(new_comment).data,
@@ -35,14 +35,14 @@ class NewComment(APIView):
 
         else:
             return Response(
-                serializer.errors,
+                {"message": "내용을 입력하세요."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
 
 # 댓글 수정, 삭제 API
 class CommentDetails(APIView):
-    # permission_classes=[IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_post(self, post_id):
         try:
@@ -61,23 +61,6 @@ class CommentDetails(APIView):
     #     print("조회:", post)
     #     comments = post.post_comments.all()
     #     print("댓글:", comments)
-
-    # if comments.count() == 0:
-    #     return Response(
-    #         {"message": "작성된 댓글이 없습니다"},
-    #         status=status.HTTP_204_NO_CONTENT,
-    #     )
-    #     serializer = CommentSerializer(
-    #         comments,
-    #         context={"request": request},
-    #         many=True,
-    #     )
-    #     print("serializer1", serializer)
-
-    #     return Response(
-    #         serializer.data,
-    #         status=status.HTTP_200_OK,
-    #     )
 
     def put(self, request, comment_id):
         comment = self.get_comment(comment_id)
@@ -104,6 +87,8 @@ class CommentDetails(APIView):
 
     def delete(self, request, comment_id):
         comment = self.get_comment(comment_id)
+        if comment.author != request.user:
+            raise PermissionDenied("삭제권한이 없습니다")
         comment.delete()
         return Response(
             status=status.HTTP_204_NO_CONTENT,
