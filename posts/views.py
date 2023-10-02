@@ -26,7 +26,7 @@ from django.db.models import Q
 
 # 새 게시글 작성 API
 class NewPost(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         serializer = PostSerializer(data=request.data)
@@ -163,8 +163,13 @@ class PostDetails(APIView):
 # 좋아요 추가 및 취소
 @api_view(["POST"])
 def like_post(request, pk):
-    post = Post.objects.get(pk=pk)
+    try:
+        post = Post.objects.get(pk=pk)
+    except Post.DoesNotExist:
+        raise NotFound("해당 게시물이 없습니다.")
+
     print(dir(request.user))
+
     if post.like_users.filter(pk=request.user.pk).exists():
         # 넌 취소를 할 수 있어
         post.like_users.remove(request.user.pk)
