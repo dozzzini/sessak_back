@@ -21,7 +21,6 @@ from .models import Post
 from .serializers import (
     PostSerializer,
     PopularPostSerializer,
-    PostListSerializer,
 )
 
 # 검색기능에 사용할 Q 불러오기
@@ -88,7 +87,7 @@ def all_post(request):
         rightIndex = paginator.num_pages
 
     total_page = list(range(leftIndex, rightIndex + 1))
-    page_list = PostListSerializer(page_obj, many=True).data
+    page_list = PostSerializer(page_obj, many=True).data
 
     return Response(
         {
@@ -138,7 +137,7 @@ class PostDetails(APIView):
             return Response(
                 {
                     "message": "게시글이 수정되었습니다.",
-                    "data": PostListSerializer(updated_post).data,
+                    "data": PostSerializer(updated_post).data,
                 },
                 status=status.HTTP_200_OK,
             )
