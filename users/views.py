@@ -46,13 +46,16 @@ class SignUp(APIView):
         serializer = SignupSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
+            user.set_password(request.data["password"])
+            user.save()
+            print(request.data)
             token = TokenObtainPairSerializer.get_token(user)
             refresh_token = str(token)
             access_token = str(token.access_token)
 
             return Response(
                 {
-                    "user": serializer.data,
+                    # "user": serializer.data,
                     "message": "회원가입에 성공했습니다.",
                     "token": {
                         "access": access_token,

@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 import random
 from django.contrib.auth.models import PermissionsMixin
+from django.utils.crypto import get_random_string
 
 
 # Create your models here.
@@ -61,7 +62,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractUser, PermissionsMixin):
     email = models.EmailField(unique=True)
-    nickname = models.CharField(max_length=10, default="random_string")
+    nickname = models.CharField(max_length=10, default=get_random_string(length=10))
     location = models.CharField(max_length=30)
     name = models.CharField(max_length=50)
     profile_image = models.URLField(null=True)
