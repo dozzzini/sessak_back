@@ -65,6 +65,7 @@ class User(AbstractUser, PermissionsMixin):
     location = models.CharField(max_length=30)
     name = models.CharField(max_length=50)
     profile_image = models.URLField(null=True)
+    username = models.CharField(max_length=10, blank=True, null=True)
 
     LOGIN_HOME = "home "
     LOGIN_GOOGLE = "google"

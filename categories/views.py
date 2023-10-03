@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.exceptions import ValidationError, NotFound, PermissionDenied
 from rest_framework.response import Response
+from rest_framework import permissions
 
 # 모델 불러오기
 from .models import Category
@@ -17,7 +18,7 @@ from .serializers import CategorySerializer
 
 # 새 키테고리 추가 API
 class NewCategory(APIView):
-    # permission_classes=[IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         serializer = CategorySerializer(data=request.data)
@@ -35,7 +36,7 @@ class NewCategory(APIView):
 
 
 class CategoryDetails(APIView):
-    # permission_classes=[IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_object(self, pk):
         try:
@@ -53,7 +54,7 @@ class CategoryDetails(APIView):
         serializer = CategorySerializer(
             category,
             data=request.data,
-            partial=True,
+            # partial=True,
         )
         if serializer.is_valid():
             updated_category = serializer.save()

@@ -18,7 +18,12 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from .models import Post
 
 # serializers 불러오기
-from .serializers import PostSerializer, PopularPostSerializer, UpdatedPostSerializer
+from .serializers import (
+    PostSerializer,
+    PopularPostSerializer,
+    UpdatedPostSerializer,
+    PostListSerializer,
+)
 
 # 검색기능에 사용할 Q 불러오기
 from django.db.models import Q
@@ -49,8 +54,6 @@ class NewPost(APIView):
 # 모든 게시글 조회
 @api_view(["GET"])
 def all_post(request):
-    # posts = Post.objects.all()
-
     # 전체 포스트가 담겨 있는 객체들을 생성일 최신순으로 정렬
     post_list = Post.objects.all().order_by("-created_at")
 
@@ -86,7 +89,7 @@ def all_post(request):
         rightIndex = paginator.num_pages
 
     total_page = list(range(leftIndex, rightIndex + 1))
-    page_list = PostSerializer(page_obj, many=True).data
+    page_list = PostListSerializer(page_obj, many=True).data
 
     return Response(
         {
@@ -97,7 +100,7 @@ def all_post(request):
     )
 
 
-# 게시글 조회, 수정 , 삭제 API
+# 각 게시글 조회, 수정 , 삭제 API
 class PostDetails(APIView):
     permission_classes = [IsAuthenticated]
 

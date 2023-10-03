@@ -36,6 +36,12 @@ class PopularPostSerializer(ModelSerializer):
         return post.total_nums
 
 
+class PostListSerializer(ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ("title", "content")
+
+
 class UpdatedPostSerializer(ModelSerializer):
     class Meta:
         model = Post
