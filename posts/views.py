@@ -21,7 +21,6 @@ from .models import Post
 from .serializers import (
     PostSerializer,
     PopularPostSerializer,
-    UpdatedPostSerializer,
     PostListSerializer,
 )
 
@@ -139,7 +138,7 @@ class PostDetails(APIView):
             return Response(
                 {
                     "message": "게시글이 수정되었습니다.",
-                    "data": UpdatedPostSerializer(updated_post).data,
+                    "data": PostListSerializer(updated_post).data,
                 },
                 status=status.HTTP_200_OK,
             )

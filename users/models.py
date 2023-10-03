@@ -30,7 +30,7 @@ class UserManager(BaseUserManager):
             profile_image=profile_image,
             name=name,
         )
-        user.set_password(password)
+        user.set_password(password) #패스워드 해시 암호화
         user.save(using=self._db)  # 기본 User 모델을 이용하여 저장하는 코드
         return user
 
