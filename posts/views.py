@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from django.db.models import Count, Sum
 
 # Restframework에서 불러온 것들
@@ -162,6 +162,7 @@ class PostDetails(APIView):
 
 
 # 좋아요 추가 및 취소
+@permission_classes([IsAuthenticated])
 @api_view(["POST"])
 def like_post(request, pk):
     try:
@@ -169,12 +170,11 @@ def like_post(request, pk):
     except Post.DoesNotExist:
         raise NotFound("해당 게시물이 없습니다.")
 
-    print(dir(request.user))
-
     if post.like_users.filter(pk=request.user.pk).exists():
         # 넌 취소를 할 수 있어
         post.like_users.remove(request.user.pk)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        print("좋아요취소")
+        return Response(status=status.HTTP_200_OK)
     else:
         # 만약 안 들어와있어
         post.like_users.add(request.user.pk)
