@@ -184,7 +184,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-        "rest_framework.authentication.SessionAuthentication",  # 배포할 때 지워야 함
+        # "rest_framework.authentication.SessionAuthentication",  # 배포할 때 지워야 함
     ),
 }
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
