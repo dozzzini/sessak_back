@@ -115,7 +115,7 @@ class PostDetails(APIView):
             post.save()
             serializer = PostSerializer(post)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        except ObjectDoesNotExist:
+        except post.DoesNotExist:
             return Response(
                 {"message": "게시글을 찾을 수 없습니다"}, status=status.HTTP_404_NOT_FOUND
             )
