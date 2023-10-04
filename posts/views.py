@@ -98,7 +98,7 @@ def all_post(request):
     )
 
 
-# 각 게시글 조회, 삭제 API
+# 각 게시글 조회, 수정 , 삭제 API
 class PostDetails(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -119,24 +119,6 @@ class PostDetails(APIView):
             return Response(
                 {"message": "게시글을 찾을 수 없습니다"}, status=status.HTTP_404_NOT_FOUND
             )
-
-    def delete(self, request, pk):
-        post = self.get_object(pk)
-
-        if post.author != request.user:
-            raise PermissionDenied("삭제권한이 없습니다")
-
-        post.delete()
-
-        return Response(
-            {"message": "게시글이 삭제되었습니다."},
-            status=status.HTTP_204_NO_CONTENT,
-        )
-
-
-# 게시글 수정
-class UpdatedPost(APIView):
-    permission_classes = [IsAuthenticated]
 
     def put(self, request, pk):
         post = self.get_object(pk)
@@ -164,6 +146,19 @@ class UpdatedPost(APIView):
                 serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+    def delete(self, request, pk):
+        post = self.get_object(pk)
+
+        if post.author != request.user:
+            raise PermissionDenied("삭제권한이 없습니다")
+
+        post.delete()
+
+        return Response(
+            {"message": "게시글이 삭제되었습니다."},
+            status=status.HTTP_204_NO_CONTENT,
+        )
 
 
 # 좋아요 추가 및 취소
