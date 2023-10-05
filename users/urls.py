@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views, social_login
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
     path(
@@ -30,5 +30,9 @@ urlpatterns = [
     path(
         "login/",
         TokenObtainPairView.as_view(),
+    ),
+    path(
+        "refresh/",
+        TokenRefreshView.as_view(),
     ),
 ]
