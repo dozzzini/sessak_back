@@ -7,7 +7,12 @@ from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-from rest_framework.exceptions import ValidationError, NotFound, PermissionDenied
+from rest_framework.exceptions import (
+    ValidationError,
+    NotFound,
+    PermissionDenied,
+    ParseError,
+)
 from rest_framework.response import Response
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -50,10 +55,18 @@ class NewPost(APIView):
 
 
 # 모든 게시글 조회
+@permission_classes([IsAuthenticated])
 @api_view(["GET"])
 def all_post(request):
     # 전체 포스트가 담겨 있는 객체들을 생성일 최신순으로 정렬
-    post_list = Post.objects.all().order_by("-created_at")
+    user = request.user
+    if user.is_authenticated:
+        post_list = Post.objects.filter(author__location=user.location).order_by(
+            "-created_at"
+        )
+
+    else:
+        raise ValidationError("위치 정보를 확인해주세요")
 
     #'page'라는 명으로 들어온 값을 가져오기
     page = int(request.GET.get("page", 1))
