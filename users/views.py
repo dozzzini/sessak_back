@@ -7,6 +7,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, RefreshToken
 from .serializers import UserSerializer, SignupSerializer
 from .models import User
+from posts.serializers import PostListSerializer
+from comments.serializers import CommentSerializer
 
 # Create your views here.
 
@@ -18,7 +20,21 @@ class UserInfo(APIView):
         if request.user.is_authenticated:  # 사용자가 인증되었는지 확인
             user = request.user
             serializer = UserSerializer(user)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(
+                {
+                    "data": serializer.data,
+                    "post": PostListSerializer(
+                        user.post_set.all(),
+                        # Post.objects.filter(pk = request.user.pk)
+                        many=True,
+                    ).data,
+                    "comment": CommentSerializer(
+                        user.comment_set.all(),
+                        many=True,
+                    ).data,
+                },
+                status=status.HTTP_200_OK,
+            )
 
         else:
             return Response(

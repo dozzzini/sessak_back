@@ -21,12 +21,14 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 # 모델 불러오기
 from .models import Post
+from comments.models import Comment
 
 # serializers 불러오기
 from .serializers import (
     PostSerializer,
     PopularPostSerializer,
 )
+from comments.serializers import CommentSerializer
 
 # 검색기능에 사용할 Q 불러오기
 from django.db.models import Q

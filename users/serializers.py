@@ -8,6 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = [
             "nickname",
             "username",
+            "location",
         ]
 
 
