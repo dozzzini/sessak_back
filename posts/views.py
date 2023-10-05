@@ -66,7 +66,7 @@ def all_post(request):
         )
 
     else:
-        raise ValidationError("위치 정보를 확인해주세요")
+        raise ValidationError({"message": "위치 정보를 확인해주세요"})
 
     #'page'라는 명으로 들어온 값을 가져오기
     page = int(request.GET.get("page", 1))
