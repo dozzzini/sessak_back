@@ -16,9 +16,9 @@ from posts.models import Post
 from .serializers import CategorySerializer
 
 
-# 새 키테고리 추가 API
+# 새 카테고리 추가 API
 class NewCategory(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
 
     def post(self, request):
         serializer = CategorySerializer(data=request.data)
@@ -70,9 +70,14 @@ class CategoryDetails(APIView):
             data=request.data,
             # partial=True,
         )
+
         if serializer.is_valid():
             updated_category = serializer.save()
             return Response(
+                {
+                    "message": "카테고리명이 수정되었습니다.",
+                    "data": CategorySerializer(updated_category),
+                },
                 status=status.HTTP_200_OK,
             )
         else:

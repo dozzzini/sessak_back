@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-import random
+import random, string
 from django.contrib.auth.models import PermissionsMixin
 from django.utils.crypto import get_random_string
 
@@ -30,7 +30,7 @@ class UserManager(BaseUserManager):
             profile_image=profile_image,
             name=name,
         )
-        user.set_password(password) #패스워드 해시 암호화
+        user.set_password(password)  # 패스워드 해시 암호화
         user.save(using=self._db)  # 기본 User 모델을 이용하여 저장하는 코드
         return user
 
@@ -60,9 +60,17 @@ class UserManager(BaseUserManager):
         return user
 
 
+def generate_random_string():
+    return "".join(random.choice(string.ascii_letters) for _ in range(10))
+
+
 class User(AbstractUser, PermissionsMixin):
     email = models.EmailField(unique=True)
-    nickname = models.CharField(max_length=10, default=get_random_string(length=10))
+    nickname = models.CharField(
+        max_length=10,
+        default=generate_random_string,
+        unique=True,
+    )
     location = models.CharField(max_length=30)
     name = models.CharField(max_length=50)
     profile_image = models.URLField(null=True)
