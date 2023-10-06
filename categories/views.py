@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 # Restframework에서 불러온 것들
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import status
 from rest_framework.exceptions import ValidationError, NotFound, PermissionDenied
 from rest_framework.response import Response
@@ -35,6 +35,20 @@ class NewCategory(APIView):
             )
 
 
+# 전체 카테고리 조회
+class CategoryList(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            category_list = Category.objects.all()
+            serializer = CategorySerializer(category_list, many=True)
+        except Category.DoesNotExist:
+            raise NotFound
+        return Response(serializer.data)
+
+
+# 개별 카테고리 조회, 수정, 삭제 API
 class CategoryDetails(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -48,6 +62,8 @@ class CategoryDetails(APIView):
         category = self.get_object(pk)
         serializer = CategorySerializer(category)
         return Response(serializer.data)
+
+    permission_classes = [IsAdminUser]
 
     def put(self, request, pk):
         category = self.get_object(pk)
