@@ -41,7 +41,7 @@ class CategoryList(APIView):
 
     def get(self, request):
         try:
-            category_list = Category.objects.all()
+            category_list = Category.objects.all().order_by("name")
             serializer = CategorySerializer(category_list, many=True)
         except Category.DoesNotExist:
             raise NotFound
@@ -62,8 +62,6 @@ class CategoryDetails(APIView):
         category = self.get_object(pk)
         serializer = CategorySerializer(category)
         return Response(serializer.data)
-
-    permission_classes = [IsAdminUser]
 
     def put(self, request, pk):
         category = self.get_object(pk)
