@@ -124,39 +124,39 @@ class PostDetails(APIView):
         except Post.DoesNotExist:
             raise NotFound
 
-    # def get(self, request, pk):
-    #     try:
-    #         post = self.get_object(pk)
-    #         post.view_num = post.view_num + 1
-    #         post.save()
-    #         serializer = PostSerializer(post)
-    #         return Response(serializer.data, status=status.HTTP_200_OK)
-    #     except post.DoesNotExist:
-    #         return Response(
-    #             {"message": "게시글을 찾을 수 없습니다"}, status=status.HTTP_404_NOT_FOUND
-    #         )
-
     def get(self, request, pk):
         try:
             post = self.get_object(pk)
-            comment = Comment.objects.filter(post__pk=pk)
             post.view_num = post.view_num + 1
             post.save()
             serializer = PostSerializer(post)
-            return Response(
-                {
-                    "post_data": serializer.data,
-                    "comment_data": CommentSerializer(
-                        comment,
-                        many=True,
-                    ).data,
-                },
-                status=status.HTTP_200_OK,
-            )
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except post.DoesNotExist:
             return Response(
                 {"message": "게시글을 찾을 수 없습니다"}, status=status.HTTP_404_NOT_FOUND
             )
+
+    # def get(self, request, pk):
+    #     try:
+    #         post = self.get_object(pk)
+    #         comment = Comment.objects.filter(post__pk=pk)
+    #         post.view_num = post.view_num + 1
+    #         post.save()
+    #         serializer = PostSerializer(post)
+    #         return Response(
+    #             {
+    #                 "post_data": serializer.data,
+    #                 "comment_data": CommentSerializer(
+    #                     comment,
+    #                     many=True,
+    #                 ).data,
+    #             },
+    #             status=status.HTTP_200_OK,
+    #         )
+    #     except post.DoesNotExist:
+    #         return Response(
+    #             {"message": "게시글을 찾을 수 없습니다"}, status=status.HTTP_404_NOT_FOUND
+    #         )
 
     def put(self, request, pk):
         post = self.get_object(pk)
