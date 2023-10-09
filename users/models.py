@@ -61,7 +61,7 @@ class UserManager(BaseUserManager):
 
 
 def generate_random_string():
-    return "".join(random.choice(string.ascii_letters) for _ in range(10))
+    return "".join(random.choice(string.ascii_letters) for _ in range(5))
 
 
 class User(AbstractUser, PermissionsMixin):
