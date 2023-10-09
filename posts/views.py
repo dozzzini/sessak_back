@@ -102,6 +102,10 @@ def all_post(request):
     ):  # 현재 페이지가 마지막 페이지(=내가 가지고 있는 마지막 페이지)를 넘을 수 없도록 최댓값을 마지막 페이지로 설정
         rightIndex = paginator.num_pages
 
+    # 페이지 수를 고정
+    while rightIndex - leftIndex + 1 > 5:
+        leftIndex += 1
+
     total_page = list(range(leftIndex, rightIndex + 1))
     page_list = PostSerializer(page_obj, many=True).data
 
