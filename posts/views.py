@@ -103,7 +103,7 @@ def all_post(request):
         rightIndex = paginator.num_pages
 
     # 페이지 수를 고정
-    while rightIndex - leftIndex + 1 > 5:
+    while rightIndex - leftIndex + 1 >= 5:
         leftIndex += 1
 
     total_page = list(range(leftIndex, rightIndex + 1))
