@@ -74,7 +74,7 @@ def all_post(request):
     #'page'라는 명으로 들어온 값을 가져오기
     page = int(request.GET.get("page", 1))
 
-    paginator = Paginator(post_list, 7)
+    paginator = Paginator(post_list, 2)
 
     try:
         # 페이지마다 할당된 포스팅이 담겨있는 객체
