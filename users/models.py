@@ -67,7 +67,7 @@ def generate_random_string():
 class User(AbstractUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     nickname = models.CharField(
-        max_length=10,
+        max_length=5,
         default=generate_random_string,
         unique=True,
     )
