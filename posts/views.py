@@ -92,22 +92,22 @@ def all_post(request):
         # page_obj = paginator.page(page)
         raise NotFound("존재하지 않는 페이지입니다.")
 
-    leftIndex = int(page) - 5
-    if leftIndex < 1:  # 현재 페이지가 1일 경우 마이너스가 되지 않도록 최솟값을 1로 설정
-        leftIndex = 1
+    # leftIndex = int(page) - 5
+    # if leftIndex < 1:  # 현재 페이지가 1일 경우 마이너스가 되지 않도록 최솟값을 1로 설정
+    #     leftIndex = 1
 
-    rightIndex = int(page) + 5
-    if (
-        rightIndex > paginator.num_pages
-    ):  # 현재 페이지가 마지막 페이지(=내가 가지고 있는 마지막 페이지)를 넘을 수 없도록 최댓값을 마지막 페이지로 설정
-        rightIndex = paginator.num_pages
+    # rightIndex = int(page) + 5
+    # if (
+    #     rightIndex > paginator.num_pages
+    # ):  # 현재 페이지가 마지막 페이지(=내가 가지고 있는 마지막 페이지)를 넘을 수 없도록 최댓값을 마지막 페이지로 설정
+    #     rightIndex = paginator.num_pages
 
-    total_page = list(range(leftIndex, rightIndex + 1))
+    # total_page = list(range(leftIndex, rightIndex + 1))
     page_list = PostSerializer(page_obj, many=True).data
 
     return Response(
         {
-            "total_page": total_page,
+            # "total_page": total_page,
             "page_list": page_list,
         },
         status=status.HTTP_200_OK,
