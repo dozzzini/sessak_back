@@ -49,8 +49,9 @@ class CategoryList(APIView):
 
 
 # 개별 카테고리 조회, 수정, 삭제 API
+
 class CategoryDetails(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAdminUser]
 
     def get_object(self, pk):
         try:
@@ -71,12 +72,15 @@ class CategoryDetails(APIView):
             # partial=True,
         )
 
+        if not request.user.is_staff:
+            raise PermissionDenied({"message":"수정권한이 없습니다"})
+
         if serializer.is_valid():
             updated_category = serializer.save()
             return Response(
                 {
                     "message": "카테고리명이 수정되었습니다.",
-                    "data": CategorySerializer(updated_category),
+                    "data": CategorySerializer(updated_category).data,
                 },
                 status=status.HTTP_200_OK,
             )
@@ -88,7 +92,13 @@ class CategoryDetails(APIView):
 
     def delete(self, request, pk):
         category = self.get_object(pk)
+
+        if not request.user.is_staff:
+            raise PermissionDenied({"message": "삭제 권한이 없습니다"})
+        
         category.delete()
+        
         return Response(
+            {"message":"카테고리가 삭제되었습니다"},
             status=status.HTTP_204_NO_CONTENT,
         )
